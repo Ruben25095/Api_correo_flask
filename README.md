@@ -1,6 +1,6 @@
 ## Api para correo con supabase 
 
-## Clonamos el repossitorio e instlamos los paquetes del archivo requirements.txt
+## Clonamos el repossitorio e instalamos los paquetes con el archivo requirements.txt
 
 ## creamos o copiamos  el archivo .env con las variables de entorno para supabase 
 
