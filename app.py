@@ -302,6 +302,58 @@ def move_trash(message_id):
         return api_response(False, error="No autorizado", status=403)
 
     return api_response(True, data="Movido a papelera")
+#--------------------------------------------------
+# recuperar password
+@app.route("/api/auth/forgot-password", methods=["POST"])
+def forgot_password():
+    data = request.get_json() or {}
+    email = data.get("email")
+
+    if not email:
+        return api_response(False, error="Email requerido", status=400)
+
+    try:
+        supabase.auth.reset_password_for_email(
+            email,
+            {
+                "redirect_to": "/login"
+            }
+        )
+
+        return api_response(
+            True,
+            data="Te enviamos un correo para recuperar tu contraseña"
+        )
+
+    except Exception as e:
+        return api_response(False, error=str(e), status=400)
+
+ #--------------------------------------------------
+ # resetear password
+@app.route("/api/auth/reset-password", methods=["POST"])
+def reset_password():
+    data = request.get_json() or {}
+
+    access_token = data.get("access_token")
+    new_password = data.get("password")
+
+    if not access_token or not new_password:
+        return api_response(False, error="Token y contraseña requeridos", status=400)
+
+    try:
+        client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+        # Autenticamos temporalmente con el token de recuperación
+        client.auth.set_session(access_token, "")
+
+        client.auth.update_user({
+            "password": new_password
+        })
+
+        return api_response(True, data="Contraseña actualizada correctamente")
+
+    except Exception as e:
+        return api_response(False, error=str(e), status=400)
 
 
 # --------------------------------------------------
